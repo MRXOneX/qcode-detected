@@ -9,39 +9,53 @@
     <span id="text">
 
     </span>
-    <video id="qr-video"></video>
+    <div id="container-qr-video">
+        <video id="qr-video"></video>
+    </div>
     <select id="cam-list" value="">
         <option value="environment" selected>Environment Facing (default)</option>
         <option value="user">User Facing</option>
     </select>
     <div id="scan-again">
         <span id="done">
-            ✔
+            &#10004;
         </span>
         <span id="error">
-            ✖
+            &#10006;
         </span>
         <button id="btn-scan-again">
             Scan again
         </button>
     </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module">
         import QrScanner from "https://nimiq.github.io/qr-scanner/qr-scanner.min.js";
+        // import axios from 'https://unpkg.com/axios/dist/axios.min.js'
 
         // document.getElementById('result').style.color = 'blue'
         const videoElem = document.getElementById('qr-video')
         const camList = document.getElementById('cam-list')
+        const containerVideoElem = document.getElementById('container-qr-video')
+        const scanAgain = document.getElementById('scan-again')
+        const done = document.getElementById('done')
+        const error = document.getElementById('error')
 
-        document.getElementById('btn-scan-again').addEventListener('click', () => {
-            start()
+        const btnScanAgain = document.getElementById('btn-scan-again')
 
-            document.getElementById('scan-again').style.display = 'none'
-        })
 
-        const fetch = (result) => {
-            var RegExp = /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\/])*)?/;
-            document.getElementById('text').innerText = result
+
+        function isValidUrl(url) {
+            const objRE = new RegExp('^(https?:\\/\\/)?' + // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                '(\\#[-a-z\\d_]*)?$', 'i');
+            return objRE.test(url);
         }
+
+
 
         // const resultFetch = (url) => {
         //     if (url?.data) {
@@ -91,6 +105,48 @@
         scanner.start()
 
 
+
+        const fetch = async (result) => {
+            if (isValidUrl(result?.data)) {
+                await axios.post(result.data, {
+                    sign: 123,
+                    name: 'test'
+                }).then(r => {
+
+                    scanner.stop();
+                    containerVideoElem.style.display = 'none'
+                    camList.style.display = 'none'
+                    scanAgain.style.display = 'flex'
+
+                    if (r.status === 200) {
+                        document.querySelector('body').style.backgroundColor = 'green'
+
+                        done.style.display = 'block'
+                    } else {
+                        document.querySelector('body').style.backgroundColor = 'red'
+
+                        error.style.display = 'block'
+                    }
+                })
+            }
+        }
+        fetch()
+
+        btnScanAgain.addEventListener('click', () => {
+
+            scanAgain.style.display = 'none'
+            document.querySelector('body').style.backgroundColor = 'white'
+            camList.style.display = 'block'
+            containerVideoElem.style.display = 'block'
+
+
+            done.style.display = 'none'
+            error.style.display = 'none'
+
+            scanner.start()
+        })
+
+
     </script>
 
     <style>
@@ -116,7 +172,7 @@
         #scan-again {
             display: none;
             flex-direction: column;
-
+            justify-content: center;
 
         }
 
@@ -131,13 +187,17 @@
             font-size: 100px;
         }
 
-        #qr-video {
+        #container-qr-video {
             width: 100%;
             height: 100%;
 
-
             border: 2px dashed black;
             border-radius: 10px;
+        }
+
+        #qr-video {
+            width: 100%;
+            height: 100%;
         }
 
         #cam-list {
