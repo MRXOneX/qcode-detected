@@ -85,10 +85,7 @@
         // }
         const fetch = async (result) => {
             if (isValidUrl(result?.data)) {
-                await axios.post(result?.data, {
-                    sign: 123,
-                    name: 'test'
-                }).then(r => {
+                await axios.get(`result?.data?sign=123&name=test`).then(r => {
 
                     
                     containerVideoElem.style.display = 'none'
