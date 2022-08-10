@@ -7,6 +7,10 @@
 
 <body>
     <video id="qr-video"></video>
+    <select id="cam-list" value="">
+        <option value="environment" selected>Environment Facing (default)</option>
+        <option value="user">User Facing</option>
+    </select>
     <div id="scan-again">
         <span id="done">
             ✔
@@ -21,8 +25,9 @@
     <script type="module">
         import QrScanner from "https://nimiq.github.io/qr-scanner/qr-scanner.min.js";
 
-        document.getElementById('result').style.color = 'blue'
+        // document.getElementById('result').style.color = 'blue'
         const videoElem = document.getElementById('qr-video')
+        const camList = document.getElementById('cam-list')
 
         document.getElementById('btn-scan-again').addEventListener('click', () => {
             start()
@@ -30,47 +35,52 @@
             document.getElementById('scan-again').style.display = 'none'
         })
 
-        const resultFetch = (url) => {
-            if (url?.data) {
-                await fetch(url.data, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        sign: 123,
-                        name: 'test'
-                    })
-                }).then(r => {
-                    qrScanner.stop();
-                    videoElem.style.display = 'none'
-                    document.getElementById('scan-again').style.display = 'flex'
-                    if (r.status === 200) {
-                        document.querySelector('body').style.backgroundColor = 'green'
-                        document.getElementById('done').style.display = 'block'
-                    } else {
-                        document.querySelector('body').style.backgroundColor = 'red'
-                        document.getElementById('error').style.display = 'block'
-                    }
-                })
-            }
-        }
+        // const resultFetch = (url) => {
+        //     if (url?.data) {
+        //         await fetch(url.data, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 sign: 123,
+        //                 name: 'test'
+        //             })
+        //         }).then(r => {
+        //             qrScanner.stop();
+        //             videoElem.style.display = 'none'
+        //             document.getElementById('scan-again').style.display = 'flex'
+        //             if (r.status === 200) {
+        //                 document.querySelector('body').style.backgroundColor = 'green'
+        //                 document.getElementById('done').style.display = 'block'
+        //             } else {
+        //                 document.querySelector('body').style.backgroundColor = 'red'
+        //                 document.getElementById('error').style.display = 'block'
+        //             }
+        //         })
+        //     }
+        // }
 
-        const qrScanner = new QrScanner(
-            videoElem,
-            result => resultFetch(result), {
+        const scanner = new QrScanner(videoElem, result => console.log(result), {
             highlightScanRegion: true,
-            highlightCodeOutline: true
-        },
-        );
+            highlightCodeOutline: true,
+        });
 
-        const start = () => {
-            qrScanner.start().then(() => {
-                QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => { }));
-            });
-        }
-        start()
+        scanner.start().then(() => {
+            QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => {
+                const option = document.createElement('option')
+                option.value = camera.id
+                option.text = camera.label
+                camList.add(option)
+            }))
+        })
+
+        camList.addEventListener('change', event => {
+            scanner.setCamera(event.target.value)
+        })
+
+        scanner.start()
 
 
     </script>
@@ -81,14 +91,18 @@
             margin: 0;
             padding: 0;
         }
+
         html {
             height: 100%;
         }
+
         body {
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+
+            position: relative;
         }
 
         #scan-again {
@@ -116,6 +130,14 @@
 
             border: 2px dashed black;
             border-radius: 10px;
+        }
+
+        #cam-list {
+            position: absolute;
+
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </body>
