@@ -83,6 +83,30 @@
         //         })
         //     }
         // }
+        const fetch = async (result) => {
+            if (isValidUrl(result?.data)) {
+                await axios.post(result?.data, {
+                    sign: 123,
+                    name: 'test'
+                }).then(r => {
+
+                    
+                    containerVideoElem.style.display = 'none'
+                    camList.style.display = 'none'
+                    scanAgain.style.display = 'flex'
+
+                    if (r.status === 200) {
+                        document.querySelector('body').style.backgroundColor = 'green'
+
+                        done.style.display = 'block'
+                    } else {
+                        document.querySelector('body').style.backgroundColor = 'red'
+
+                        error.style.display = 'block'
+                    }
+                })
+            }
+        }
 
         const scanner = new QrScanner(videoElem, result => fetch(result), {
             highlightScanRegion: true,
@@ -105,32 +129,6 @@
         scanner.start()
 
 
-
-        const fetch = async (result) => {
-            if (isValidUrl(result?.data)) {
-                await axios.post(result.data, {
-                    sign: 123,
-                    name: 'test'
-                }).then(r => {
-
-                    scanner.stop();
-                    containerVideoElem.style.display = 'none'
-                    camList.style.display = 'none'
-                    scanAgain.style.display = 'flex'
-
-                    if (r.status === 200) {
-                        document.querySelector('body').style.backgroundColor = 'green'
-
-                        done.style.display = 'block'
-                    } else {
-                        document.querySelector('body').style.backgroundColor = 'red'
-
-                        error.style.display = 'block'
-                    }
-                })
-            }
-        }
-        fetch()
 
         btnScanAgain.addEventListener('click', () => {
 
