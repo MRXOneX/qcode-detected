@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>QR Scanner</title>
+</head>
+
+<body>
+    <video id="qr-video"></video>
+    <div id="scan-again">
+        <span id="done">
+            ✔
+        </span>
+        <span id="error">
+            ✖
+        </span>
+        <button id="btn-scan-again">
+            Scan again
+        </button>
+    </div>
+    <script type="module">
+        import QrScanner from "https://nimiq.github.io/qr-scanner/qr-scanner.min.js";
+
+        document.getElementById('result').style.color = 'blue'
+        const videoElem = document.getElementById('qr-video')
+
+        document.getElementById('btn-scan-again').addEventListener('click', () => {
+            start()
+
+            document.getElementById('scan-again').style.display = 'none'
+        })
+
+        const resultFetch = (url) => {
+            if (url?.data) {
+                await fetch(url.data, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sign: 123,
+                        name: 'test'
+                    })
+                }).then(r => {
+                    qrScanner.stop();
+                    videoElem.style.display = 'none'
+                    document.getElementById('scan-again').style.display = 'flex'
+                    if (r.status === 200) {
+                        document.querySelector('body').style.backgroundColor = 'green'
+                        document.getElementById('done').style.display = 'block'
+                    } else {
+                        document.querySelector('body').style.backgroundColor = 'red'
+                        document.getElementById('error').style.display = 'block'
+                    }
+                })
+            }
+        }
+
+        const qrScanner = new QrScanner(
+            videoElem,
+            result => resultFetch(result), {
+            highlightScanRegion: true,
+            highlightCodeOutline: true
+        },
+        );
+
+        const start = () => {
+            qrScanner.start().then(() => {
+                QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => { }));
+            });
+        }
+        start()
+
+
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scan-again {
+            display: none;
+            flex-direction: column;
+
+
+        }
+
+        #done {
+            display: none;
+            font-size: 100px;
+
+        }
+
+        #error {
+            display: none;
+            font-size: 100px;
+        }
+
+        #qr-video {
+            width: 100%;
+            height: 100%;
+
+
+            border: 2px dashed black;
+            border-radius: 10px;
+        }
+    </style>
+</body>
+
+</html>
