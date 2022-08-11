@@ -77,6 +77,13 @@
                     document.querySelector('body').style.backgroundColor = 'red'
                     error.style.display = 'block'
                 })
+            } else {
+                containerVideoElem.style.display = 'none'
+                camList.style.display = 'none'
+                scanAgain.style.display = 'flex'
+
+                document.querySelector('body').style.backgroundColor = 'red'
+                error.style.display = 'block'
             }
         }
         const scanner = new QrScanner(videoElem, result => fetch(result, scanner), {
@@ -156,7 +163,7 @@
         #done {
             display: none;
             font-size: 350px;
-            
+
             color: white;
 
         }
