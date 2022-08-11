@@ -1,5 +1,5 @@
 
-import scanner from "./scanner";
+const scanner =  require("./scanner")
 
 
 function isValidUrl(url) {
