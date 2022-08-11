@@ -88,6 +88,8 @@
                     camList.style.display = 'none'
                     scanAgain.style.display = 'flex'
 
+                    scanner.stop()
+
                     if (r.status === 200) {
                         document.querySelector('body').style.backgroundColor = 'green'
 
@@ -122,6 +124,7 @@
 
 
 
+        console.log(scanner)
         btnScanAgain.addEventListener('click', () => {
 
             scanAgain.style.display = 'none'
