@@ -51,8 +51,8 @@
 
 
         const fetch = async (result, scanner) => {
+            scanner.stop()
             if (isValidUrl(result?.data)) {
-                scanner.stop()
 
                 await axios.get(result.data + '?sign=123&name=test').then(r => {
 
