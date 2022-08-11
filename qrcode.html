@@ -31,6 +31,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module">
         import QrScanner from "https://nimiq.github.io/qr-scanner/qr-scanner.min.js";
+        import scanner from './scanner.js'
         // import axios from 'https://unpkg.com/axios/dist/axios.min.js'
 
         // document.getElementById('result').style.color = 'blue'
@@ -44,66 +45,7 @@
         const btnScanAgain = document.getElementById('btn-scan-again')
 
 
-
-        function isValidUrl(url) {
-            const objRE = new RegExp('qrlabel\.co\/go\/');
-            return objRE.test(url);
-        }
-
-
-
-        // const resultFetch = (url) => {
-        //     if (url?.data) {
-        //         await fetch(url.data, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Accept': 'application/json',
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 sign: 123,
-        //                 name: 'test'
-        //             })
-        //         }).then(r => {
-        //             qrScanner.stop();
-        //             videoElem.style.display = 'none'
-        //             document.getElementById('scan-again').style.display = 'flex'
-        //             if (r.status === 200) {
-        //                 document.querySelector('body').style.backgroundColor = 'green'
-        //                 document.getElementById('done').style.display = 'block'
-        //             } else {
-        //                 document.querySelector('body').style.backgroundColor = 'red'
-        //                 document.getElementById('error').style.display = 'block'
-        //             }
-        //         })
-        //     }
-        // }
-        const fetch = async (result) => {
-            console.log(result)
-            // https://qrlabel.co/go/8e5ca369-dad3-4aa9-a774-1e96eeea33e9
-            if (isValidUrl(result?.data)) {
-                await axios.get(result.data + '?sign=123&name=test').then(r => {
-
-                    containerVideoElem.style.display = 'none'
-                    camList.style.display = 'none'
-                    scanAgain.style.display = 'flex'
-
-                    if (r.status === 200) {
-                        document.querySelector('body').style.backgroundColor = 'green'
-
-                        done.style.display = 'block'
-                    } else {
-                        document.querySelector('body').style.backgroundColor = 'red'
-
-                        error.style.display = 'block'
-                    }
-                })
-            }
-        }
-        const scanner = new QrScanner(videoElem, result => fetch(result), {
-            highlightScanRegion: true,
-            highlightCodeOutline: true,
-        });
+        
 
         scanner.start().then(() => {
             QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => {
