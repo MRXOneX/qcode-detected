@@ -31,9 +31,8 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module">
         import QrScanner from "https://nimiq.github.io/qr-scanner/qr-scanner.min.js";
-        // import axios from 'https://unpkg.com/axios/dist/axios.min.js'
 
-        // document.getElementById('result').style.color = 'blue'
+
         const videoElem = document.getElementById('qr-video')
         const camList = document.getElementById('cam-list')
         const containerVideoElem = document.getElementById('container-qr-video')
@@ -51,44 +50,15 @@
         }
 
 
-
-        // const resultFetch = (url) => {
-        //     if (url?.data) {
-        //         await fetch(url.data, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Accept': 'application/json',
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 sign: 123,
-        //                 name: 'test'
-        //             })
-        //         }).then(r => {
-        //             qrScanner.stop();
-        //             videoElem.style.display = 'none'
-        //             document.getElementById('scan-again').style.display = 'flex'
-        //             if (r.status === 200) {
-        //                 document.querySelector('body').style.backgroundColor = 'green'
-        //                 document.getElementById('done').style.display = 'block'
-        //             } else {
-        //                 document.querySelector('body').style.backgroundColor = 'red'
-        //                 document.getElementById('error').style.display = 'block'
-        //             }
-        //         })
-        //     }
-        // }
         const fetch = async (result, scanner) => {
-            console.log(scanner)
-            // https://qrlabel.co/go/8e5ca369-dad3-4aa9-a774-1e96eeea33e9
             if (isValidUrl(result?.data)) {
+                scanner.stop()
+
                 await axios.get(result.data + '?sign=123&name=test').then(r => {
 
                     containerVideoElem.style.display = 'none'
                     camList.style.display = 'none'
                     scanAgain.style.display = 'flex'
-
-                    scanner.stop()
 
                     if (r.status === 200) {
                         document.querySelector('body').style.backgroundColor = 'green'
@@ -99,6 +69,13 @@
 
                         error.style.display = 'block'
                     }
+                }).catch(e => {
+                    containerVideoElem.style.display = 'none'
+                    camList.style.display = 'none'
+                    scanAgain.style.display = 'flex'
+
+                    document.querySelector('body').style.backgroundColor = 'red'
+                    error.style.display = 'block'
                 })
             }
         }
@@ -123,8 +100,6 @@
         scanner.start()
 
 
-
-        console.log(scanner)
         btnScanAgain.addEventListener('click', () => {
 
             scanAgain.style.display = 'none'
