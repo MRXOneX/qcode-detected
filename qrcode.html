@@ -80,10 +80,9 @@
         // }
         const fetch = async (result) => {
             // https://qrlabel.co/go/8e5ca369-dad3-4aa9-a774-1e96eeea33e9
-            let isRepeated = false
-            if (isValidUrl(result?.data) && !isRepeated) {
+            if (isValidUrl(result?.data)) {
                 await axios.get(result.data + '?sign=123&name=test').then(r => {
-
+                    debugger
 
                     containerVideoElem.style.display = 'none'
                     camList.style.display = 'none'
@@ -98,13 +97,11 @@
 
                         error.style.display = 'block'
                     }
-                }).finally(() => {
-                    isRepeated = true
                 })
             }
         }
-        fetch()
 
+        debugger;
         const scanner = new QrScanner(videoElem, result => fetch(result), {
             highlightScanRegion: true,
             highlightCodeOutline: true,
@@ -183,12 +180,16 @@
         #done {
             display: none;
             font-size: 350px;
+            
+            color: white;
 
         }
 
         #error {
             display: none;
             font-size: 350px;
+
+            color: white;
         }
 
         #container-qr-video {
