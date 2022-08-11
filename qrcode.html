@@ -103,7 +103,7 @@
         const scanner = new QrScanner(videoElem, result => fetch(result, scanner), {
             highlightScanRegion: true,
             highlightCodeOutline: true,
-        });
+        })
 
         scanner.start().then(() => {
             QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => {
